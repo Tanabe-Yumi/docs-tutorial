@@ -88,10 +88,6 @@ body {
 }
 
 .tiptap {
-  :first-child {
-    margin-top: 0;
-  }
-
   /* heading */
   h1,
   h2,
@@ -151,6 +147,18 @@ body {
     p {
       margin-top: 0.25em;
       margin-bottom: 0.25em;
+    }
+  }
+
+  /* image */
+  img {
+    display: block;
+    height: auto;
+    margin: 1.5rem 0;
+    max-width: 100%;
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid skyblue;
     }
   }
 
