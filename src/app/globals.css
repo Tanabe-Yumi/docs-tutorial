@@ -86,3 +86,35 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+  }
+
+  /* unordered list */
+  ul li {
+    list-style-type: disc;
+
+    p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
+  }
+
+  /* ordered list */
+  ol li {
+    list-style-type: decimal;
+
+    p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
+  }
+}
