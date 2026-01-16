@@ -17,10 +17,39 @@ export const Editor = () => {
   const { setEditor } = useEditorStore();
 
   const editor = useEditor({
-    // onCreate: tiptap editor のイベントリスナー
-    // - editor が最初に作られたときに呼ばれる
+    // tiptap editor のイベントリスナー
+    // - イベント発生時に editor をストアに動悸させる
+    // editor が最初に作られたとき
     onCreate({ editor }) {
       // editor-store(zustand) に保存され、useEditorStore を使ってどこからでもアクセスできる
+      setEditor(editor);
+    },
+    // エディターが閉じられたとき
+    onDestroy() {
+      setEditor(null);
+    },
+    // content 更新時
+    onUpdate({ editor }) {
+      setEditor(editor);
+    },
+    // selection 更新時
+    onSelectionUpdate({ editor }) {
+      setEditor(editor);
+    },
+    // エディターの state 更新時
+    onTransaction({ editor }) {
+      setEditor(editor);
+    },
+    // エディターがフォーカスされたとき
+    onFocus({ editor }) {
+      setEditor(editor);
+    },
+    // エディターのフォーカスが外れたとき
+    onBlur({ editor }) {
+      setEditor(editor);
+    },
+    // content がスキーマにマッチしない
+    onContentError({ editor }) {
       setEditor(editor);
     },
     editorProps: {
