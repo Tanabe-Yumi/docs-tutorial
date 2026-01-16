@@ -11,8 +11,18 @@ import TableRow from "@tiptap/extension-table-row";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
 
+import { useEditorStore } from "@/store/use-editor-store";
+
 export const Editor = () => {
+  const { setEditor } = useEditorStore();
+
   const editor = useEditor({
+    // onCreate: tiptap editor のイベントリスナー
+    // - editor が最初に作られたときに呼ばれる
+    onCreate({ editor }) {
+      // editor-store(zustand) に保存され、useEditorStore を使ってどこからでもアクセスできる
+      setEditor(editor);
+    },
     editorProps: {
       attributes: {
         // 後で動的になり、Tailwind は使えないため style を設定
