@@ -192,6 +192,16 @@ body {
     }
   }
 
+  /* link */
+  a {
+    @apply text-blue-600;
+    cursor: pointer;
+
+    &:hover {
+      @apply underline;
+    }
+  }
+
   /* table */
   table {
     border-collapse: collapse;
