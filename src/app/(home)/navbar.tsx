@@ -12,7 +12,11 @@ export const Navbar = () => {
         </Link>
         <h3 className="text-xl">Docs</h3>
       </div>
+
+      {/* 検索窓 */}
       <SearchInput />
+
+      {/* ユーザーアイコン、ユーザー情報を確認できる */}
       <UserButton />
     </nav>
   );
