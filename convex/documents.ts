@@ -1,12 +1,14 @@
 import { ConvexError, v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import { mutation, query } from "./_generated/server";
 
 // データ取得関数 (API エンドポイント)
 // - スキーマが変更されると、get メソッドの戻り値の型もリアルタイムに更新される
+// - ページネーション: 決まった数ずつ結果を返す
 export const get = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("documents").collect();
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    return await ctx.db.query("documents").paginate(args.paginationOpts);
   },
 });
 
