@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Doc } from "../../../convex/_generated/dataModel";
@@ -10,12 +11,13 @@ interface DocumentRowProps {
 }
 
 export const DocumentRow = ({ document }: DocumentRowProps) => {
-  const onNewTabClick = (id: string) => {
-    window.open(`/documents/${id}`, "_blank");
-  };
+  const router = useRouter();
 
   return (
-    <TableRow className="cursor-pointer">
+    <TableRow
+      className="cursor-pointer"
+      onClick={() => router.push(`/documents/${document._id}`)}
+    >
       <TableCell className="w-[50px]">
         <SiGoogledocs className="size-6 fill-blue-500" />
       </TableCell>
@@ -35,7 +37,7 @@ export const DocumentRow = ({ document }: DocumentRowProps) => {
         <DocumentMenu
           documentId={document._id}
           title={document.title}
-          onNewTab={onNewTabClick}
+          onNewTab={() => window.open(`/documents/${document._id}`, "_blank")}
         />
       </TableCell>
     </TableRow>

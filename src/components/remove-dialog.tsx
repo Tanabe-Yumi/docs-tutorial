@@ -22,6 +22,10 @@ interface RemoveDialogProps {
 }
 
 // stopPropagation: 親要素へイベント実行が伝わらなくなる
+// - 例) コンポーネントA にクリックイベントを設定している
+//       コンポーネントB にクリックイベントを設定している
+//       コンポーネントA の children に B を配置
+//       B をクリックしたときに、A のクリックイベントが発火するのを避ける
 
 export const RemoveDialog = ({ documentId, children }: RemoveDialogProps) => {
   const remove = useMutation(api.documents.removeById);
