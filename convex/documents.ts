@@ -16,8 +16,25 @@ export const get = query({
       throw new ConvexError("Unauthorized");
     }
 
-    // 検索クエリがある場合
-    // 自分が作成したドキュメントの中から検索
+    // organization_id はデフォルトにはなく手動で JWT テンプレートに追加したため、正確な型定義がされていない
+    // そのため、as句を用いて`string | undefined`型に定義する
+    const organizationId = (user.organization_id ?? undefined) as
+      | string
+      | undefined;
+
+    // 検索クエリがある かつ 組織IDがある 場合
+    // - 組織のドキュメントの中から検索
+    if (search && organizationId) {
+      return await ctx.db
+        .query("documents")
+        .withSearchIndex("search_title", (q) =>
+          q.search("title", search).eq("organizationId", organizationId)
+        )
+        .paginate(paginationOpts);
+    }
+
+    // 検索クエリがある かつ 組織IDがない 場合
+    // - 自分のドキュメントの中から検索
     if (search) {
       return await ctx.db
         .query("documents")
@@ -27,8 +44,19 @@ export const get = query({
         .paginate(paginationOpts);
     }
 
-    // 検索クエリがない場合
-    // 自分が作成したドキュメントのみ表示
+    // 検索クエリがない かつ 組織IDがある 場合
+    // - 組織のドキュメントを全て取得
+    if (organizationId) {
+      return await ctx.db
+        .query("documents")
+        .withIndex("by_organization_id", (q) =>
+          q.eq("organizationId", organizationId)
+        )
+        .paginate(paginationOpts);
+    }
+
+    // 検索クエリがない かつ 組織IDがない 場合
+    // - 自分のドキュメントを全て取得
     return await ctx.db
       .query("documents")
       .withIndex("by_owner_id", (q) => q.eq("ownerId", user.subject))
@@ -50,9 +78,14 @@ export const create = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+    const organizationId = (user.organization_id ?? undefined) as
+      | string
+      | undefined;
+
     return await ctx.db.insert("documents", {
       title: args.title ?? "Untitled document",
       ownerId: user.subject,
+      organizationId,
       initialContent: args.initialContent,
     });
   },
@@ -66,13 +99,19 @@ export const removeById = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+    const organizationId = (user.organization_id ?? undefined) as
+      | string
+      | undefined;
+
     const document = await ctx.db.get(args.id);
     if (!document) {
       throw new ConvexError("Document not found");
     }
 
     const isOwner = document.ownerId === user.subject;
-    if (!isOwner) {
+    const isOrganizationMember = document.organizationId === organizationId;
+    // 所有者でも組織メンバーでもない場合は、削除不可
+    if (!isOwner && !isOrganizationMember) {
       throw new ConvexError("Unauthorized");
     }
 
@@ -88,13 +127,19 @@ export const updateById = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+    const organizationId = (user.organization_id ?? undefined) as
+      | string
+      | undefined;
+
     const document = await ctx.db.get(args.id);
     if (!document) {
       throw new ConvexError("Document not found");
     }
 
     const isOwner = document.ownerId === user.subject;
-    if (!isOwner) {
+    const isOrganizationMember = document.organizationId === organizationId;
+    // 所有者でも組織メンバーでもない場合は、更新不可
+    if (!isOwner && !isOrganizationMember) {
       throw new ConvexError("Unauthorized");
     }
 

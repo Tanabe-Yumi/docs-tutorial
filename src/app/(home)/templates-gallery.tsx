@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
   Carousel,
@@ -24,7 +25,9 @@ export const TemplatesGallery = () => {
   const onTemplateClick = (title: string, initialContent: string) => {
     setIsCreating(true);
     create({ title, initialContent })
+      .catch(() => toast.error("Something went wrong"))
       .then((documentId) => {
+        toast.success("Document created");
         // 作成されたドキュメント ID のページに飛ばす
         router.push(`/documents/${documentId}`);
       })
