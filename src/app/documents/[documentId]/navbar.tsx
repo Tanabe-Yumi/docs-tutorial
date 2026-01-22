@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
 import { BsFilePdf } from "react-icons/bs";
 import {
   BoldIcon,
@@ -256,6 +257,18 @@ export const Navbar = () => {
             </Menubar>
           </div>
         </div>
+      </div>
+
+      <div className="flex gap-3 items-center pl-6">
+        {/* organization or personal */}
+        <OrganizationSwitcher
+          afterCreateOrganizationUrl="/"
+          afterLeaveOrganizationUrl="/"
+          afterSelectOrganizationUrl="/"
+          afterSelectPersonalUrl="/"
+        />
+        {/* ユーザーアイコン、ユーザー情報を確認できる */}
+        <UserButton />
       </div>
     </nav>
   );
