@@ -1,7 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
 import { SearchInput } from "./search-input";
+
+// OrganizationSwitcher の属性
+// - organization の切り替えをしたときに開いているドキュメントを開き続けられないよう、
+//   ホームにリダイレクトする
 
 export const Navbar = () => {
   return (
@@ -16,8 +20,17 @@ export const Navbar = () => {
       {/* 検索窓 */}
       <SearchInput />
 
-      {/* ユーザーアイコン、ユーザー情報を確認できる */}
-      <UserButton />
+      <div className="flex gap-3 items-center pl-6">
+        {/* organization or personal */}
+        <OrganizationSwitcher
+          afterCreateOrganizationUrl="/"
+          afterLeaveOrganizationUrl="/"
+          afterSelectOrganizationUrl="/"
+          afterSelectPersonalUrl="/"
+        />
+        {/* ユーザーアイコン、ユーザー情報を確認できる */}
+        <UserButton />
+      </div>
     </nav>
   );
 };
