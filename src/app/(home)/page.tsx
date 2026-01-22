@@ -2,6 +2,7 @@
 
 import React from "react";
 import { usePaginatedQuery } from "convex/react";
+import { useSearchParam } from "@/hooks/use-search-param";
 import { Navbar } from "./navbar";
 import { TemplatesGallery } from "./templates-gallery";
 // convex によって自動生成された API エンドポイント
@@ -9,13 +10,15 @@ import { api } from "../../../convex/_generated/api";
 import { DocumentsTable } from "./documents-table";
 
 const Home = () => {
+  const [search] = useSearchParam();
+
   // ページネーションありの get メソッド
   // - 第一引数: 実行する関数
   // - 第二引数: 関数に渡す引数
   // - 第三引数: ページネーションのオプション
   const { results, status, loadMore } = usePaginatedQuery(
     api.documents.get,
-    {},
+    { search },
     { initialNumItems: 5 }
   );
 
