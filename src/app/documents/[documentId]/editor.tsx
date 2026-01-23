@@ -76,7 +76,10 @@ export const Editor = () => {
     extensions: [
       // for collaboration
       liveBlocks,
-      StarterKit,
+      StarterKit.configure({
+        // Liveblocks の履歴を使用するため、tiptap の履歴は無効化
+        history: false,
+      }),
       LineHeightExtension.configure({
         type: ["heading", "paragraph"],
         defaultLineHeight: "normal",
