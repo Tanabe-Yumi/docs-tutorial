@@ -17,6 +17,7 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
+import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
 
 import { useEditorStore } from "@/store/use-editor-store";
 import { FontSizeExtension } from "@/extensions/font-size";
@@ -24,6 +25,7 @@ import { LineHeightExtension } from "@/extensions/line-height";
 import { Ruler } from "./ruler";
 
 export const Editor = () => {
+  const liveBlocks = useLiveblocksExtension();
   const { setEditor } = useEditorStore();
 
   const editor = useEditor({
@@ -72,6 +74,8 @@ export const Editor = () => {
       },
     },
     extensions: [
+      // for collaboration
+      liveBlocks,
       StarterKit,
       LineHeightExtension.configure({
         type: ["heading", "paragraph"],
