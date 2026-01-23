@@ -13,10 +13,13 @@ export function Room({ children }: { children: ReactNode }) {
 
   return (
     <LiveblocksProvider
-      publicApiKey={
-        "pk_dev_2FkQDWri-EEyf3uqBEhJjGWP7mp5F2UfTj0o7mJ0hyFY04NqOWG6olKjcM3lJw4t"
-      }
+      throttle={16}
+      // ドキュメントアクセス時の認証エンドポイントを指定（カスタム）
+      // - 自身が所有 もしくは 所属組織 の場合のみ接続許可
+      // - POST リクエスト、引数に ID
+      authEndpoint="/api/liveblocks-auth"
     >
+      {/* roomID = documentID */}
       <RoomProvider id={params.documentId as string}>
         <ClientSideSuspense fallback={<div>Loading…</div>}>
           {children}
