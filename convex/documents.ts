@@ -64,6 +64,14 @@ export const get = query({
   },
 });
 
+// ドキュメントが誰のものかを取得するため、また機密データを含まないため、認証(ownerId/organizationId の確認) しない
+export const getById = query({
+  args: { id: v.id("documents") },
+  handler: async (ctx, { id }) => {
+    return await ctx.db.get(id);
+  },
+});
+
 // ドキュメント作成用メソッド
 // 戻り値: insert data の id
 export const create = mutation({
@@ -109,7 +117,9 @@ export const removeById = mutation({
     }
 
     const isOwner = document.ownerId === user.subject;
-    const isOrganizationMember = document.organizationId === organizationId;
+    const isOrganizationMember = !!(
+      document.organizationId && document.organizationId === organizationId
+    );
     // 所有者でも組織メンバーでもない場合は、削除不可
     if (!isOwner && !isOrganizationMember) {
       throw new ConvexError("Unauthorized");
@@ -137,7 +147,9 @@ export const updateById = mutation({
     }
 
     const isOwner = document.ownerId === user.subject;
-    const isOrganizationMember = document.organizationId === organizationId;
+    const isOrganizationMember = !!(
+      document.organizationId && document.organizationId === organizationId
+    );
     // 所有者でも組織メンバーでもない場合は、更新不可
     if (!isOwner && !isOrganizationMember) {
       throw new ConvexError("Unauthorized");

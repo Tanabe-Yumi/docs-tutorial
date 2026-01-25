@@ -17,13 +17,16 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
+import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
 
 import { useEditorStore } from "@/store/use-editor-store";
 import { FontSizeExtension } from "@/extensions/font-size";
 import { LineHeightExtension } from "@/extensions/line-height";
 import { Ruler } from "./ruler";
+import { Threads } from "./threads";
 
 export const Editor = () => {
+  const liveBlocks = useLiveblocksExtension();
   const { setEditor } = useEditorStore();
 
   const editor = useEditor({
@@ -72,7 +75,12 @@ export const Editor = () => {
       },
     },
     extensions: [
-      StarterKit,
+      // for collaboration
+      liveBlocks,
+      StarterKit.configure({
+        // Liveblocks の履歴を使用するため、tiptap の履歴は無効化
+        history: false,
+      }),
       LineHeightExtension.configure({
         type: ["heading", "paragraph"],
         defaultLineHeight: "normal",
@@ -111,6 +119,7 @@ export const Editor = () => {
       {/* ↓背景 */}
       <div className="min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0">
         <EditorContent editor={editor} />
+        <Threads editor={editor} />
       </div>
     </div>
   );
