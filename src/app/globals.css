@@ -287,3 +287,8 @@ body {
     display: none;
   }
 }
+
+/* notification のメニューが表示されるよう強制的に上書き */
+div[data-radix-popper-content-wrapper] {
+  z-index: 50 !important;
+}

@@ -37,6 +37,7 @@ import {
 import { useEditorStore } from "@/store/use-editor-store";
 import { DocumentInput } from "./document-input";
 import { Avatars } from "./avatars";
+import { Inbox } from "./inbox";
 
 export const Navbar = () => {
   const { editor } = useEditorStore();
@@ -263,6 +264,9 @@ export const Navbar = () => {
       <div className="flex gap-3 items-center pl-6">
         {/* 共同編集中のユーザーアイコン */}
         <Avatars />
+
+        {/* 通知 */}
+        <Inbox />
 
         {/* organization or personal */}
         <OrganizationSwitcher

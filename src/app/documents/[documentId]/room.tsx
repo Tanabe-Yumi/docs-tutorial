@@ -9,7 +9,8 @@ import {
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { FullscreenLoader } from "@/components/fullscreen-loader";
-import { getUsers } from "./actions";
+import { getUsers, getDocuments } from "./actions";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 type User = { id: string; name: string; avatar: string };
 
@@ -35,7 +36,7 @@ export function Room({ children }: { children: ReactNode }) {
         toast.error("Failed to fetch users");
       }
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -48,13 +49,25 @@ export function Room({ children }: { children: ReactNode }) {
       // ドキュメントアクセス時の認証エンドポイントを指定（カスタム）
       // - 自身が所有 もしくは 所属組織 の場合のみ接続許可
       // - POST リクエスト、引数に ID
-      authEndpoint="/api/liveblocks-auth"
+      // - 表示中のドキュメントに限らず別のドキュメント等からの通知も受け取るため、リクエストボディを明示化
+      //   - 別のドキュメントからの通知の場合 room 情報が渡されずエラーになるのを回避するため
+      authEndpoint={async () => {
+        const endpoint = "/api/liveblocks-auth";
+        const room = params.documentId as string;
+
+        const response = await fetch(endpoint, {
+          method: "POST",
+          body: JSON.stringify({ room }),
+        });
+
+        return await response.json();
+      }}
       // コメント、エディタ、通知のユーザー情報を解決
       // - users: 同じ組織の全ユーザー
       // - userIds: ルーム(ドキュメント)にアクセスしたことがあるユーザー?
       resolveUsers={({ userIds }) => {
         return userIds.map(
-          (userId) => users.find((user) => user.id === userId) ?? undefined
+          (userId) => users.find((user) => user.id === userId) ?? undefined,
         );
       }}
       // メンション提案を解決 (@xxx)
@@ -64,13 +77,21 @@ export function Room({ children }: { children: ReactNode }) {
 
         if (text) {
           filteredUsers = users.filter((user) =>
-            user.name.toLowerCase().includes(text.toLowerCase())
+            user.name.toLowerCase().includes(text.toLowerCase()),
           );
         }
 
         return filteredUsers.map((user) => user.id);
       }}
-      resolveRoomsInfo={() => []}
+      // notification 内のルーム(ドキュメント)を解決
+      // - どのドキュメントからの通知かを、ID ではなく名前で表示するため
+      resolveRoomsInfo={async ({ roomIds }) => {
+        const documents = await getDocuments(roomIds as Id<"documents">[]);
+        return documents.map((document) => ({
+          id: document.id,
+          name: document.name,
+        }));
+      }}
     >
       {/* roomID = documentID */}
       <RoomProvider id={params.documentId as string}>

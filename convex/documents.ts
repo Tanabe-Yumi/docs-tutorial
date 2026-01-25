@@ -28,7 +28,7 @@ export const get = query({
       return await ctx.db
         .query("documents")
         .withSearchIndex("search_title", (q) =>
-          q.search("title", search).eq("organizationId", organizationId)
+          q.search("title", search).eq("organizationId", organizationId),
         )
         .paginate(paginationOpts);
     }
@@ -39,7 +39,7 @@ export const get = query({
       return await ctx.db
         .query("documents")
         .withSearchIndex("search_title", (q) =>
-          q.search("title", search).eq("ownerId", user.subject)
+          q.search("title", search).eq("ownerId", user.subject),
         )
         .paginate(paginationOpts);
     }
@@ -50,7 +50,7 @@ export const get = query({
       return await ctx.db
         .query("documents")
         .withIndex("by_organization_id", (q) =>
-          q.eq("organizationId", organizationId)
+          q.eq("organizationId", organizationId),
         )
         .paginate(paginationOpts);
     }
@@ -69,6 +69,26 @@ export const getById = query({
   args: { id: v.id("documents") },
   handler: async (ctx, { id }) => {
     return await ctx.db.get(id);
+  },
+});
+
+// id のリストからドキュメント名のリストを取得
+export const getByIds = query({
+  args: { ids: v.array(v.id("documents")) },
+  handler: async (ctx, { ids }) => {
+    const documents = [];
+
+    for (const id of ids) {
+      const document = await ctx.db.get(id);
+      if (document) {
+        documents.push({ id: document._id, name: document.title });
+      } else {
+        // 削除されたドキュメント
+        documents.push({ id, name: "[Removed]" });
+      }
+    }
+
+    return documents;
   },
 });
 
