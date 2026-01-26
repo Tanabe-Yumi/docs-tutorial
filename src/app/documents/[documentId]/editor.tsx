@@ -18,6 +18,7 @@ import TableRow from "@tiptap/extension-table-row";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
 import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
+import { useStorage } from "@liveblocks/react";
 
 import { useEditorStore } from "@/store/use-editor-store";
 import { FontSizeExtension } from "@/extensions/font-size";
@@ -28,6 +29,8 @@ import { Threads } from "./threads";
 export const Editor = () => {
   const liveBlocks = useLiveblocksExtension();
   const { setEditor } = useEditorStore();
+  const leftMargin = useStorage((root) => root.leftMargin);
+  const rightMargin = useStorage((root) => root.rightMargin);
 
   const editor = useEditor({
     // tiptap editor のイベントリスナー
@@ -67,8 +70,9 @@ export const Editor = () => {
     },
     editorProps: {
       attributes: {
-        // 後で動的になり、Tailwind は使えないため style を設定
-        style: "padding-left: 56px; padding-right: 56px;",
+        // Ruler コンポーネントで変更 → Liveblocks storage に保存 → Editor コンポーネントで取得し設定
+        // 動的であり、Tailwind は使えないため style を設定
+        style: `padding-left: ${leftMargin ?? 56}px; padding-right: ${rightMargin ?? 56}px;`,
         // Tiptap エディターの CSS 設定
         class:
           "focus:outline-none print:border-0 bg-white border border-[#c7c7c7] flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text",

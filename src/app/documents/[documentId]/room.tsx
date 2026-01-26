@@ -94,7 +94,11 @@ export function Room({ children }: { children: ReactNode }) {
       }}
     >
       {/* roomID = documentID */}
-      <RoomProvider id={params.documentId as string}>
+      <RoomProvider
+        id={params.documentId as string}
+        // Liveblocks storage の初期値を設定
+        initialStorage={{ leftMargin: 56, rightMargin: 56 }}
+      >
         <ClientSideSuspense
           fallback={<FullscreenLoader label="Room loading..." />}
         >

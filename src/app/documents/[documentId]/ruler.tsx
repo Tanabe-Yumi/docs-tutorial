@@ -1,14 +1,28 @@
 import { useRef, useState } from "react";
-import { MarsIcon } from "lucide-react";
 import { FaCaretDown } from "react-icons/fa";
-import { max } from "date-fns";
+import { useStorage, useMutation } from "@liveblocks/react";
 
 const markers = Array.from({ length: 83 }, (_, i) => i);
 // -> [0, 1, 2, ..., 82]
 
+// useStorage
+// - Liveblocks storage からデータを取得し自動更新
+// - liveblocks.config.ts にて storage の設定
+
+// useMutation
+// - Liveblocks の state を更新するコールバック関数を作成
+
 export const Ruler = () => {
-  const [leftMargin, setLeftMargin] = useState(56);
-  const [rightMargin, setRightMargin] = useState(56);
+  const leftMargin = useStorage((root) => root.leftMargin) ?? 56;
+  const setLeftMargin = useMutation(({ storage }, position: number) => {
+    // Liveblocks storage のデータ変更
+    storage.set("leftMargin", position);
+  }, []);
+  const rightMargin = useStorage((root) => root.rightMargin) ?? 56;
+  const setRightMargin = useMutation(({ storage }, position: number) => {
+    storage.set("rightMargin", position);
+  }, []);
+
   const [isDraggingLeft, setIsDraggingLeft] = useState(false);
   const [isDraggingRight, setIsDraggingRight] = useState(false);
 
@@ -56,7 +70,7 @@ export const Ruler = () => {
           const newRightMargin = Math.max(PAGE_WIDTH - rawPosition, 0);
           const constrainedRightMargin = Math.min(
             newRightMargin,
-            maxRightMargin
+            maxRightMargin,
           );
           setRightMargin(constrainedRightMargin); // TODO: Make clollaborative (with other users)
         }
