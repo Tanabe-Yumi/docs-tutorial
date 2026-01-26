@@ -1,6 +1,11 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Collaborative Docs
 
-## Getting Started
+Create documents collaboratively!  
+
+Next.js、Tiptap、Liveblocks、Convexで構築された**リアルタイム共同編集ドキュメントエディタ**。  
+ユーザーはドキュメントを作成、編集、共有でき、リアルタイムカーソルやコメント機能による共同編集を実現します。
+
+## ローカルサーバー起動
 
 ```bash
 # frontend
@@ -11,17 +16,28 @@ npm run dev
 npx convex dev
 ```
 
-## Learn More
+正常な動作のためには、フロントエンドとバックエンドを並行して実行する必要があります。
 
-To learn more about Next.js, take a look at the following resources:
+## 使用技術
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### フロントエンド
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 言語: TypeScript
+- フレームワーク: Next.js 15 (App Router)
+  - React 19
+- スタイル: Tailwind CSS, Shadcn UI
+- 認証: Clerk
 
-## Deploy on Vercel
+### バックエンド
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 言語: TypeScript
+- フレームワーク: Next.js 15 (App Router)
+  - React 19
+- データベース: Convex
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### その他
+
+- エディタ: Tiptap
+- リアルタイム共同編集: Liveblocks
+- 状態管理: Zustand
+- バージョン管理: Git, GitHub
