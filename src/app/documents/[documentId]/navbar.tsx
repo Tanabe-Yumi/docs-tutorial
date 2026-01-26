@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
+import { toast } from "sonner";
+import { useMutation } from "convex/react";
 import { BsFilePdf } from "react-icons/bs";
 import {
   BoldIcon,
@@ -38,6 +41,7 @@ import { useEditorStore } from "@/store/use-editor-store";
 import { DocumentInput } from "./document-input";
 import { Avatars } from "./avatars";
 import { Inbox } from "./inbox";
+import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
 
 interface NavbarProps {
@@ -45,7 +49,22 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ data }: NavbarProps) => {
+  const router = useRouter();
   const { editor } = useEditorStore();
+
+  const mutation = useMutation(api.documents.create);
+
+  const onNewDocument = () => {
+    mutation({
+      title: "Untitled document",
+      initialContent: "",
+    })
+      .catch(() => toast.error("Something went wrong"))
+      .then((id) => {
+        toast.success("Document created");
+        router.push(`/documents/${id}`);
+      });
+  };
 
   const insertTable = ({ rows, cols }: { rows: number; cols: number }) => {
     editor
@@ -134,7 +153,7 @@ export const Navbar = ({ data }: NavbarProps) => {
                       </MenubarItem>
                     </MenubarSubContent>
                   </MenubarSub>
-                  <MenubarItem>
+                  <MenubarItem onClick={onNewDocument}>
                     <FilePlusIcon className="size-4 mr-2" />
                     New Document
                   </MenubarItem>
