@@ -43,12 +43,21 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  // 名前を数字に変換し、個別の色を作成 (→ 共同編集中のカーソル位置を示すカラー)
+  const name =
+    user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous";
+  const nameToNumber = name
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const hue = Math.abs(nameToNumber) % 360;
+  const color = `hsl(${hue}, 80%, 60%)`;
+
   // 接続
   const session = liveblocks.prepareSession(user.id, {
     userInfo: {
-      name:
-        user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous",
+      name: name,
       avatar: user.imageUrl,
+      color,
     },
   });
   session.allow(room, session.FULL_ACCESS);
