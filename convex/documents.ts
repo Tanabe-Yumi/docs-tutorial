@@ -68,7 +68,13 @@ export const get = query({
 export const getById = query({
   args: { id: v.id("documents") },
   handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+    const document = await ctx.db.get(id);
+    // 戻り値が null になるのを回避
+    if (!document) {
+      throw new ConvexError("Document not found");
+    }
+
+    return document;
   },
 });
 
