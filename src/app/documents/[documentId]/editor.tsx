@@ -26,8 +26,16 @@ import { LineHeightExtension } from "@/extensions/line-height";
 import { Ruler } from "./ruler";
 import { Threads } from "./threads";
 
-export const Editor = () => {
-  const liveBlocks = useLiveblocksExtension();
+interface EditorProps {
+  initialContent?: string | undefined;
+}
+
+export const Editor = ({ initialContent }: EditorProps) => {
+  const liveBlocks = useLiveblocksExtension({
+    initialContent,
+    // ドキュメントを開いたときのコンテンツ読み込み速度向上
+    offlineSupport_experimental: true,
+  });
   const { setEditor } = useEditorStore();
   const leftMargin = useStorage((root) => root.leftMargin);
   const rightMargin = useStorage((root) => root.rightMargin);
