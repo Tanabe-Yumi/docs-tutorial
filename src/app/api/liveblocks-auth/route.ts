@@ -14,9 +14,12 @@ export async function POST(req: Request) {
   if (!sessionClaims) {
     return new Response("Unauthorized", { status: 401 });
   }
-  const orgId = ((sessionClaims as any)?.o?.id ?? undefined) as
-    | string
-    | undefined;
+  // Clerk の sessionClaims に組織情報が含まれる場合の型定義
+  type SessionClaimsWithOrg = typeof sessionClaims & {
+    o?: { id?: string };
+  };
+  const orgId = ((sessionClaims as SessionClaimsWithOrg)?.o?.id ??
+    undefined) as string | undefined;
 
   const user = await currentUser();
   if (!user) {

@@ -15,9 +15,13 @@ export async function getUsers() {
   const { sessionClaims } = await auth();
   const clerk = await clerkClient();
 
+  // Clerk の sessionClaims に組織情報が含まれる場合の型定義
+  type SessionClaimsWithOrg = typeof sessionClaims & {
+    o?: { id?: string };
+  };
   // 同じ組織内のユーザーを全て取得
   const response = await clerk.users.getUserList({
-    organizationId: [(sessionClaims as any)?.o?.id as string],
+    organizationId: [(sessionClaims as SessionClaimsWithOrg)?.o?.id as string],
   });
 
   const users = response.data.map((user) => ({
@@ -26,6 +30,7 @@ export async function getUsers() {
     name:
       user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous",
     avatar: user.imageUrl,
+    color: "",
   }));
 
   return users;
