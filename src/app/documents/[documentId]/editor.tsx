@@ -25,12 +25,23 @@ import { FontSizeExtension } from "@/extensions/font-size";
 import { LineHeightExtension } from "@/extensions/line-height";
 import { Ruler } from "./ruler";
 import { Threads } from "./threads";
+import { LEFT_MARGIN_DEFAULT, RIGHT_MARGIN_DEFAULT } from "@/constants/margins";
 
-export const Editor = () => {
-  const liveBlocks = useLiveblocksExtension();
+interface EditorProps {
+  initialContent?: string | undefined;
+}
+
+export const Editor = ({ initialContent }: EditorProps) => {
+  const liveBlocks = useLiveblocksExtension({
+    initialContent,
+    // ドキュメントを開いたときのコンテンツ読み込み速度向上
+    offlineSupport_experimental: true,
+  });
   const { setEditor } = useEditorStore();
-  const leftMargin = useStorage((root) => root.leftMargin);
-  const rightMargin = useStorage((root) => root.rightMargin);
+  const leftMargin =
+    useStorage((root) => root.leftMargin) ?? LEFT_MARGIN_DEFAULT;
+  const rightMargin =
+    useStorage((root) => root.rightMargin) ?? RIGHT_MARGIN_DEFAULT;
 
   const editor = useEditor({
     // tiptap editor のイベントリスナー
@@ -72,7 +83,7 @@ export const Editor = () => {
       attributes: {
         // Ruler コンポーネントで変更 → Liveblocks storage に保存 → Editor コンポーネントで取得し設定
         // 動的であり、Tailwind は使えないため style を設定
-        style: `padding-left: ${leftMargin ?? 56}px; padding-right: ${rightMargin ?? 56}px;`,
+        style: `padding-left: ${leftMargin}px; padding-right: ${rightMargin}px;`,
         // Tiptap エディターの CSS 設定
         class:
           "focus:outline-none print:border-0 bg-white border border-[#c7c7c7] flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text",
