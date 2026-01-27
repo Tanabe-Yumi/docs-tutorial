@@ -9,7 +9,7 @@ Next.js、Tiptap、Liveblocks、Convexで構築された**リアルタイム共�
 
 ```bash
 # frontend
-npm install
+npm install --legacy-peer-deps
 npm run dev
 
 # backend
