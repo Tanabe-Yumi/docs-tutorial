@@ -61,11 +61,11 @@ export const Navbar = ({ data }: NavbarProps) => {
       title: "Untitled document",
       initialContent: "",
     })
-      .catch(() => toast.error("Something went wrong"))
       .then((id) => {
         toast.success("Document created");
         router.push(`/documents/${id}`);
-      });
+      })
+      .catch((e) => toast.error(e.data));
   };
 
   const insertTable = ({ rows, cols }: { rows: number; cols: number }) => {

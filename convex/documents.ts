@@ -112,6 +112,18 @@ export const create = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+    // ゲストユーザーは最大ドキュメント数を20に制限
+    if (user.name === "guestuser1" || user.name === "guestuser2") {
+      const documents = await ctx.db
+        .query("documents")
+        .filter((q) => q.eq(q.field("ownerId"), user.subject))
+        .collect();
+
+      if (documents.length >= 20) {
+        throw new ConvexError("Too many documents. (max: 20)");
+      }
+    }
+
     const organizationId = (user.organization_id ?? undefined) as
       | string
       | undefined;
