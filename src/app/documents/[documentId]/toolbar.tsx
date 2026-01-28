@@ -627,7 +627,8 @@ const ToolbarButton = ({
       onClick={onClick}
       // 動的クラスを扱う場合は`cn`を使うことで、バグを抑えることができる
       className={cn(
-        "text-sm h-7 min-w-7 flex items-center justify-center rounded-sm hover:bg-neutral-200/80",
+        "text-sm h-7 min-w-7 flex items-center justify-center rounded-sm",
+        !disabled && "hover:bg-neutral-200/80",
         isActive && "bg-neutral-200/80",
       )}
       disabled={disabled}
