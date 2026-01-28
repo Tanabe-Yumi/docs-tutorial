@@ -513,13 +513,15 @@ const FontFamilyButton = () => {
     { label: "Comic Relief", value: "var(--font-comic-relief)" },
   ];
 
+  const currentFontValue = editor?.getAttributes("textStyle").fontFamily;
+  const currentFontLabel =
+    fonts.find((font) => font.value === currentFontValue)?.label || "Arial";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="h-7 w-[120px] shrink-0 flex items-center justify-between rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
-          <span className="truncate">
-            {editor?.getAttributes("textStyle").fontFamily || "Arial"}
-          </span>
+          <span className="truncate">{currentFontLabel}</span>
           <ChevronDownIcon className="ml-2 size-4 shrink-0" />
         </button>
       </DropdownMenuTrigger>
