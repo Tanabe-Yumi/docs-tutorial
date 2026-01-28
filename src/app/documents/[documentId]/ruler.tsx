@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { useStorage, useMutation } from "@liveblocks/react";
 import { LEFT_MARGIN_DEFAULT, RIGHT_MARGIN_DEFAULT } from "@/constants/margins";
+import { PAGE_WIDTH, MINIMUM_SPACE } from "@/constants/pageSize";
 
 const markers = Array.from({ length: 83 }, (_, i) => i);
 // -> [0, 1, 2, ..., 82]
@@ -43,8 +44,6 @@ export const Ruler = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    const PAGE_WIDTH = 816;
-    const MINIMUM_SPACE = 100;
     if ((isDraggingLeft || isDraggingRight) && rulerRef.current) {
       // rulerRef 配下の #ruler-container 要素を取得
       const container = rulerRef.current.querySelector("#ruler-container");
@@ -107,7 +106,7 @@ export const Ruler = () => {
       onMouseUp={handleMouseUp}
       // マウスカーソルが要素外に出たとき
       onMouseLeave={handleMouseUp}
-      className="w-[816px] mx-auto h-6 border-b border-gray-300 flex items-end relative select-none print:hidden"
+      className="w-page mx-auto h-6 border-b border-gray-300 flex items-end relative select-none print:hidden"
     >
       <div id="ruler-container" className="w-full h-full relative">
         <Marker
@@ -126,9 +125,9 @@ export const Ruler = () => {
           onDoubleClick={handleRightDoubleClick}
         />
         <div className="absolute inset-x-0 bottom-0 h-full">
-          <div className="relative h-full w-[816px]">
+          <div className="relative h-full w-page">
             {markers.map((marker) => {
-              const position = (marker * 816) / 82;
+              const position = (marker * PAGE_WIDTH) / 82;
               return (
                 <div
                   key={marker}

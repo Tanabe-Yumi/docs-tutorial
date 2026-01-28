@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { PAGE_WIDTH } from "./src/constants/pageSize";
 
 export default {
     darkMode: ["class"],
@@ -87,7 +88,10 @@ export default {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+  		},
+			width: {
+        'page': `${PAGE_WIDTH}px`,
+      }
   	}
   },
   plugins: [require("tailwindcss-animate")],
