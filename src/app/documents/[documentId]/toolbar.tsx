@@ -477,6 +477,7 @@ const TextColorButton = () => {
     { color: "#ff6d01", title: "coral" },
     { color: "#46bdc6", title: "turquoise" },
     { color: "#8d2cb2", title: "purple" },
+    { color: "#6c3e1c", title: "brown" },
     { color: "#78909c", title: "cyan gray" },
     { color: "#2f2f2f", title: "dark gray" },
     { color: "#e5e5e5", title: "light gray" },
