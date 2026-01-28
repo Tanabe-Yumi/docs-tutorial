@@ -30,6 +30,7 @@ import {
   ImageIcon,
   ItalicIcon,
   Link2Icon,
+  Link2OffIcon,
   ListCollapseIcon,
   ListIcon,
   ListOrderedIcon,
@@ -365,7 +366,15 @@ const LinkButton = () => {
   const [value, setValue] = useState("");
 
   const onChange = (href: string) => {
-    editor?.chain().focus().extendMarkRange("link").setLink({ href }).run();
+    if (href === "") {
+      onLinkOff();
+    } else {
+      editor?.chain().focus().extendMarkRange("link").setLink({ href }).run();
+    }
+  };
+
+  const onLinkOff = () => {
+    editor?.chain().focus().extendMarkRange("link").unsetLink().run();
     setValue("");
   };
 
@@ -393,6 +402,14 @@ const LinkButton = () => {
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />
+        <Button
+          variant="outline"
+          onClick={onLinkOff}
+          className="p-3"
+          disabled={!editor?.getAttributes("link").href}
+        >
+          <Link2OffIcon />
+        </Button>
         <Button onClick={() => onChange(value)}>Apply</Button>
       </DropdownMenuContent>
     </DropdownMenu>

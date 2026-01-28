@@ -194,12 +194,9 @@ body {
 
   /* link */
   a {
-    @apply text-blue-600;
+    @apply underline;
+    @apply text-blue-700;
     cursor: pointer;
-
-    &:hover {
-      @apply underline;
-    }
   }
 
   /* table */
