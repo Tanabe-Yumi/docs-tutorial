@@ -76,7 +76,7 @@ const LineHeightButton = () => {
             className={cn(
               "flex items-center gap-x-2 ps-2 py-1 rounded-sm hover:bg-neutral-200/80",
               editor?.getAttributes("paragraph").lineHeight === value &&
-                "bg-neutral-200/80"
+                "bg-neutral-200/80",
             )}
           >
             <span className="text-sm">{label}</span>
@@ -211,7 +211,7 @@ const ListButton = () => {
             onClick={onClick}
             className={cn(
               "flex items-center gap-x-2 ps-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              isActive() && "bg-neutral-200/80"
+              isActive() && "bg-neutral-200/80",
             )}
           >
             <Icon className="size-4" />
@@ -263,7 +263,7 @@ const AlignButton = () => {
             onClick={() => editor?.chain().focus().setTextAlign(value).run()}
             className={cn(
               "flex items-center gap-x-2 ps-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              editor?.isActive({ textAlign: value }) && "bg-neutral-200/80"
+              editor?.isActive({ textAlign: value }) && "bg-neutral-200/80",
             )}
           >
             <Icon className="size-4" />
@@ -485,7 +485,7 @@ const HeadingLevelButton = () => {
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80 leading-normal",
               (value === 0 && !editor?.isActive("heading")) ||
                 (editor?.isActive("heading", { level: value }) &&
-                  "bg-neutral-200/80")
+                  "bg-neutral-200/80"),
             )}
             style={{ fontSize }}
           >
@@ -503,8 +503,14 @@ const FontFamilyButton = () => {
     { label: "Arial", value: "Arial" },
     { label: "Times New Roman", value: "Times New Roman" },
     { label: "Courier New", value: "Courier New" },
+    { label: "M PLUS 1p", value: "var(--font-m-plus-1p)" },
+    { label: "M PLUS Rounded 1c", value: "var(--font-m-plus-rounded-1c)" },
+    { label: "Noto Sans JP", value: "var(--font-noto-sans-jp)" },
+    { label: "LINE Seed", value: "var(--font-line-seed)" },
+    { label: "Consola", value: "var(--font-consola)" },
     { label: "Georgia", value: "Georgia" },
     { label: "Verdana", value: "Verdana" },
+    { label: "Comic Relief", value: "var(--font-comic-relief)" },
   ];
 
   return (
@@ -522,11 +528,11 @@ const FontFamilyButton = () => {
           <DropdownMenuItem
             key={value}
             onClick={() => editor?.chain().focus().setFontFamily(value).run()}
-            // フォント指定を className(Tailwind CSS) で行うのは動的すぎて正しく動作しないため、styles でせてい
+            // フォント指定を className(Tailwind CSS) で行うのは動的すぎて正しく動作しないため、styles で設定
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
               editor?.getAttributes("textStyle").fontFamily === value &&
-                "bg-neutral-200/80"
+                "bg-neutral-200/80",
             )}
             style={{ fontFamily: value }}
           >
@@ -556,7 +562,7 @@ const ToolbarButton = ({
       // 動的クラスを扱う場合は`cn`を使うことで、バグを抑えることができる
       className={cn(
         "text-sm h-7 min-w-7 flex items-center justify-center rounded-sm hover:bg-neutral-200/80",
-        isActive && "bg-neutral-200/80"
+        isActive && "bg-neutral-200/80",
       )}
     >
       <Icon className="size-4" />
@@ -598,7 +604,7 @@ export const Toolbar = () => {
           const current = editor?.view.dom.getAttribute("spellcheck");
           editor?.view.dom.setAttribute(
             "spellcheck",
-            current === "false" ? "true" : "false"
+            current === "false" ? "true" : "false",
           );
         },
       },
