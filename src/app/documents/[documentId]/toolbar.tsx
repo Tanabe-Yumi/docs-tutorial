@@ -396,6 +396,20 @@ const HighlightColorButton = () => {
   const { editor } = useEditorStore();
   const value = editor?.getAttributes("highlight").color || "#ffffff";
 
+  const colors = [
+    { color: "#ffff01", title: "yellow" },
+    { color: "#00ff01", title: "lime" },
+    { color: "#ff00ff", title: "magenta" },
+    { color: "#00ffff", title: "aqua" },
+    { color: "#b400ff", title: "purple" },
+    { color: "#f8b1c1", title: "pink" },
+    { color: "#87ceeb", title: "skyblue" },
+    { color: "#8dcf9b", title: "light green" },
+    { color: "#fbbc04", title: "light orange" },
+    { color: "#000000", title: "black" },
+    { color: "#ffffff", title: "white" },
+  ];
+
   const onChange = (color: ColorResult) => {
     editor?.chain().focus().setHighlight({ color: color.hex }).run();
   };
@@ -404,11 +418,17 @@ const HighlightColorButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
-          <HighlighterIcon className="size-4" />
+          <HighlighterIcon className="size-4 rounded-sm" />
+          <div
+            className="h-0.5 w-full"
+            style={{
+              backgroundColor: editor?.getAttributes("highlight").color || "",
+            }}
+          />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
-        <SketchPicker color={value} onChange={onChange} />
+        <SketchPicker color={value} onChange={onChange} presetColors={colors} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -422,6 +442,21 @@ const TextColorButton = () => {
     editor?.chain().focus().setColor(color.hex).run();
   };
 
+  const colors = [
+    { color: "#000000", title: "black" },
+    { color: "#ffffff", title: "white" },
+    { color: "#4285f4", title: "cornflower blue" },
+    { color: "#ea4335", title: "orangered" },
+    { color: "#fbbc04", title: "light orange" },
+    { color: "#34a853", title: "green" },
+    { color: "#ff6d01", title: "coral" },
+    { color: "#46bdc6", title: "turquoise" },
+    { color: "#8d2cb2", title: "purple" },
+    { color: "#78909c", title: "cyan gray" },
+    { color: "#2f2f2f", title: "dark gray" },
+    { color: "#e5e5e5", title: "light gray" },
+  ];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -431,7 +466,7 @@ const TextColorButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
-        <SketchPicker color={value} onChange={onChange} />
+        <SketchPicker color={value} onChange={onChange} presetColors={colors} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
