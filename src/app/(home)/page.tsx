@@ -1,8 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { usePaginatedQuery } from "convex/react";
+import { toast } from "sonner";
 import { useSearchParam } from "@/hooks/use-search-param";
+// import { clerkClient } from "@clerk/nextjs/server";
+import { getUsers } from "@/lib/actions";
+import { type User } from "@/types/user";
 import { Navbar } from "./navbar";
 import { TemplatesGallery } from "./templates-gallery";
 // convex によって自動生成された API エンドポイント
@@ -11,6 +15,7 @@ import { DocumentsTable } from "./documents-table";
 
 const Home = () => {
   const [search] = useSearchParam();
+  const [users, setUsers] = useState<User[]>([]);
 
   // ページネーションありの get メソッド
   // - 第一引数: 実行する関数
@@ -19,8 +24,24 @@ const Home = () => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.documents.get,
     { search },
-    { initialNumItems: 5 }
+    { initialNumItems: 5 },
   );
+
+  const fetchUsers = useMemo(
+    () => async () => {
+      try {
+        const list = await getUsers();
+        setUsers(list);
+      } catch {
+        toast.error("Failed to fetch users");
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -33,6 +54,7 @@ const Home = () => {
           documents={results}
           loadMore={loadMore}
           status={status}
+          users={users}
         />
       </div>
     </div>
