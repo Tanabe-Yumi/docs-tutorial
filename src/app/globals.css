@@ -96,32 +96,36 @@ body {
   h5,
   h6 {
     line-height: 1.1;
-    margin-top: 2.5rem;
     text-wrap: pretty;
   }
 
-  h1,
-  h2 {
-    margin-top: 3.5rem;
-    margin-bottom: 1.5rem;
-  }
-
   h1 {
-    font-size: 1.4rem;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   h2 {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-top: 1.2rem;
+    margin-bottom: 0.5rem;
   }
 
   h3 {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   h4,
   h5,
   h6 {
     font-size: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   ul,
@@ -174,6 +178,7 @@ body {
 
       > label {
         flex: 0 0 auto;
+        margin-top: 0.1rem;
         margin-right: 0.5rem;
         user-select: none;
       }
@@ -228,7 +233,7 @@ body {
     }
 
     .selectedCell:after {
-      background: #c7c7c7;
+      background: #e5e5e5;
       content: '';
       left: 0;
       right: 0;
