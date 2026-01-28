@@ -398,20 +398,29 @@ const LinkButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
-        <Input
-          placeholder="https://example.com"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <Button
-          variant="outline"
-          onClick={onLinkOff}
-          className="p-3"
-          disabled={!editor?.getAttributes("link").href}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onChange(value);
+          }}
+          className="flex items-center gap-x-2"
         >
-          <Link2OffIcon />
-        </Button>
-        <Button onClick={() => onChange(value)}>Apply</Button>
+          <Input
+            placeholder="https://example.com"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onLinkOff}
+            className="p-3"
+            disabled={!editor?.getAttributes("link").href}
+          >
+            <Link2OffIcon />
+          </Button>
+          <Button type="submit">Apply</Button>
+        </form>
       </DropdownMenuContent>
     </DropdownMenu>
   );
