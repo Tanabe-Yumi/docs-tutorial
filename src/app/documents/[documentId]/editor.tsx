@@ -126,6 +126,7 @@ export const Editor = ({ initialContent }: EditorProps) => {
       ImageResize,
     ],
     immediatelyRender: false,
+    autofocus: true,
   });
 
   return (
