@@ -145,6 +145,7 @@ const FontSizeButton = () => {
       <button
         className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80"
         onClick={decrement}
+        disabled={fontSize <= 4}
       >
         <MinusIcon className="size-4" />
       </button>
@@ -163,7 +164,7 @@ const FontSizeButton = () => {
           onClick={() => {
             setIsEditing(true);
             setFontSize(currentFontSize);
-            setInputValue(currentFontSize); //
+            setInputValue(currentFontSize);
           }}
         >
           {currentFontSize}
@@ -172,6 +173,7 @@ const FontSizeButton = () => {
       <button
         className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80"
         onClick={increment}
+        disabled={fontSize >= 999}
       >
         <PlusIcon className="size-4" />
       </button>
@@ -376,7 +378,12 @@ const LinkButton = () => {
       }}
     >
       <DropdownMenuTrigger asChild>
-        <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+        <button
+          className={cn(
+            "h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm",
+            editor?.getAttributes("link").href && "bg-neutral-200/80",
+          )}
+        >
           <Link2Icon className="size-4" />
         </button>
       </DropdownMenuTrigger>
@@ -584,15 +591,18 @@ const FontFamilyButton = () => {
 interface ToolbarButtonProps {
   onClick?: () => void;
   isActive?: boolean;
+  disabled?: boolean;
   icon: LucideIcon;
 }
 
 const ToolbarButton = ({
   onClick,
   isActive,
+  disabled,
   // Icon にリマップ
   icon: Icon,
 }: ToolbarButtonProps) => {
+  // アイコンの色を状態に応じて決定
   return (
     <button
       onClick={onClick}
@@ -601,31 +611,34 @@ const ToolbarButton = ({
         "text-sm h-7 min-w-7 flex items-center justify-center rounded-sm hover:bg-neutral-200/80",
         isActive && "bg-neutral-200/80",
       )}
+      disabled={disabled}
     >
-      <Icon className="size-4" />
+      <Icon className={cn("size-4", disabled ? "stroke-neutral-500" : "")} />
     </button>
   );
 };
 
 export const Toolbar = () => {
   const { editor } = useEditorStore();
-  // console.log("Toolbar editor: ", { editor });
 
   const sections: {
     label: string;
     icon: LucideIcon;
     onClick: () => void;
     isActive?: boolean;
+    disabled?: boolean;
   }[][] = [
     [
       {
         label: "Undo",
         icon: Undo2Icon,
+        disabled: !editor?.can().undo(),
         onClick: () => editor?.chain().focus().undo().run(),
       },
       {
         label: "Redo",
         icon: Redo2Icon,
+        disabled: !editor?.can().redo(),
         onClick: () => editor?.chain().focus().redo().run(),
       },
       {
@@ -636,6 +649,7 @@ export const Toolbar = () => {
       {
         label: "Spell Check",
         icon: SpellCheckIcon,
+        isActive: editor?.view.dom.getAttribute("spellcheck") === "true",
         onClick: () => {
           // ブラウザのネイティブスペルチェックを on/off
           const current = editor?.view.dom.getAttribute("spellcheck");
