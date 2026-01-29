@@ -16,10 +16,12 @@ import {
   FileTextIcon,
   GlobeIcon,
   ItalicIcon,
+  MinusIcon,
   PrinterIcon,
   Redo2Icon,
   RemoveFormattingIcon,
   StrikethroughIcon,
+  TableIcon,
   TextIcon,
   TrashIcon,
   UnderlineIcon,
@@ -210,7 +212,10 @@ export const Navbar = ({ data }: NavbarProps) => {
                 </MenubarTrigger>
                 <MenubarContent>
                   <MenubarSub>
-                    <MenubarSubTrigger>Table</MenubarSubTrigger>
+                    <MenubarSubTrigger>
+                      <TableIcon className="size-4 mr-2" />
+                      Table
+                    </MenubarSubTrigger>
                     <MenubarSubContent>
                       <MenubarItem
                         onClick={() => insertTable({ rows: 1, cols: 1 })}
@@ -234,6 +239,14 @@ export const Navbar = ({ data }: NavbarProps) => {
                       </MenubarItem>
                     </MenubarSubContent>
                   </MenubarSub>
+                  <MenubarItem
+                    onClick={() =>
+                      editor?.chain().focus().setHorizontalRule().run()
+                    }
+                  >
+                    <MinusIcon className="size-4 mr-2" />
+                    Separator line
+                  </MenubarItem>
                 </MenubarContent>
               </MenubarMenu>
               <MenubarMenu>
