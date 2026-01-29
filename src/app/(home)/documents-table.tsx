@@ -7,6 +7,7 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
+import { type User } from "@/types/user";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { LoaderIcon } from "lucide-react";
 import { DocumentRow } from "./document-row";
@@ -16,12 +17,14 @@ interface DocaumentsTableProps {
   documents: Doc<"documents">[] | undefined;
   loadMore: (numItems: number) => void;
   status: PaginationStatus;
+  users: User[];
 }
 
 export const DocumentsTable = ({
   documents,
   loadMore,
   status,
+  users,
 }: DocaumentsTableProps) => {
   return (
     <div className="max-w-screen-xl mx-auto px-16 py-6 flex flex-col gap-5">
@@ -35,6 +38,7 @@ export const DocumentsTable = ({
             <TableRow className="hover:bg-transparent border-none">
               <TableHead>Name</TableHead>
               <TableHead>&nbsp;</TableHead>
+              <TableHead className="hidden md:table-cell">Owner</TableHead>
               <TableHead className="hidden md:table-cell">Shared</TableHead>
               <TableHead className="hidden md:table-cell">Created at</TableHead>
             </TableRow>
@@ -53,7 +57,11 @@ export const DocumentsTable = ({
           ) : (
             <TableBody>
               {documents.map((document) => (
-                <DocumentRow key={document._id} document={document} />
+                <DocumentRow
+                  key={document._id}
+                  document={document}
+                  user={users.find((user) => document.ownerId === user.id)}
+                />
               ))}
             </TableBody>
           )}

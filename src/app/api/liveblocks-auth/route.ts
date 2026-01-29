@@ -8,6 +8,21 @@ const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
 });
 
+const colors = [
+  "#4285f4",
+  "#ea4335",
+  "#fbbc04",
+  "#34a853",
+  "#ff6d01",
+  "#46bdc6",
+  "#87ceeb",
+  "#8dcf9b",
+  "#b400ff",
+  "#6c3e1c",
+  "#78909c",
+  "#2f2f2f",
+];
+
 // room にアクセスする場合に実行
 export async function POST(req: Request) {
   const { sessionClaims } = await auth();
@@ -52,15 +67,14 @@ export async function POST(req: Request) {
   const nameToNumber = name
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const hue = Math.abs(nameToNumber) % 360;
-  const color = `hsl(${hue}, 80%, 60%)`;
+  const index = Math.abs(nameToNumber) % colors.length;
 
   // 接続
   const session = liveblocks.prepareSession(user.id, {
     userInfo: {
       name: name,
       avatar: user.imageUrl,
-      color,
+      color: colors[index],
     },
   });
   session.allow(room, session.FULL_ACCESS);

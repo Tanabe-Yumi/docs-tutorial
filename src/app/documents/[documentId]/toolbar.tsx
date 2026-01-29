@@ -30,6 +30,7 @@ import {
   ImageIcon,
   ItalicIcon,
   Link2Icon,
+  Link2OffIcon,
   ListCollapseIcon,
   ListIcon,
   ListOrderedIcon,
@@ -43,6 +44,8 @@ import {
   RemoveFormattingIcon,
   SearchIcon,
   SpellCheckIcon,
+  StrikethroughIcon,
+  TextQuoteIcon,
   UnderlineIcon,
   Undo2Icon,
   UploadIcon,
@@ -76,7 +79,7 @@ const LineHeightButton = () => {
             className={cn(
               "flex items-center gap-x-2 ps-2 py-1 rounded-sm hover:bg-neutral-200/80",
               editor?.getAttributes("paragraph").lineHeight === value &&
-                "bg-neutral-200/80"
+                "bg-neutral-200/80",
             )}
           >
             <span className="text-sm">{label}</span>
@@ -145,6 +148,7 @@ const FontSizeButton = () => {
       <button
         className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80"
         onClick={decrement}
+        disabled={fontSize <= 4}
       >
         <MinusIcon className="size-4" />
       </button>
@@ -163,7 +167,7 @@ const FontSizeButton = () => {
           onClick={() => {
             setIsEditing(true);
             setFontSize(currentFontSize);
-            setInputValue(currentFontSize); //
+            setInputValue(currentFontSize);
           }}
         >
           {currentFontSize}
@@ -172,6 +176,7 @@ const FontSizeButton = () => {
       <button
         className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80"
         onClick={increment}
+        disabled={fontSize >= 999}
       >
         <PlusIcon className="size-4" />
       </button>
@@ -211,7 +216,7 @@ const ListButton = () => {
             onClick={onClick}
             className={cn(
               "flex items-center gap-x-2 ps-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              isActive() && "bg-neutral-200/80"
+              isActive() && "bg-neutral-200/80",
             )}
           >
             <Icon className="size-4" />
@@ -263,7 +268,7 @@ const AlignButton = () => {
             onClick={() => editor?.chain().focus().setTextAlign(value).run()}
             className={cn(
               "flex items-center gap-x-2 ps-2 py-1 rounded-sm hover:bg-neutral-200/80",
-              editor?.isActive({ textAlign: value }) && "bg-neutral-200/80"
+              editor?.isActive({ textAlign: value }) && "bg-neutral-200/80",
             )}
           >
             <Icon className="size-4" />
@@ -363,7 +368,15 @@ const LinkButton = () => {
   const [value, setValue] = useState("");
 
   const onChange = (href: string) => {
-    editor?.chain().focus().extendMarkRange("link").setLink({ href }).run();
+    if (href === "") {
+      onLinkOff();
+    } else {
+      editor?.chain().focus().extendMarkRange("link").setLink({ href }).run();
+    }
+  };
+
+  const onLinkOff = () => {
+    editor?.chain().focus().extendMarkRange("link").unsetLink().run();
     setValue("");
   };
 
@@ -376,17 +389,39 @@ const LinkButton = () => {
       }}
     >
       <DropdownMenuTrigger asChild>
-        <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+        <button
+          className={cn(
+            "h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm",
+            editor?.getAttributes("link").href && "bg-neutral-200/80",
+          )}
+        >
           <Link2Icon className="size-4" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
-        <Input
-          placeholder="https://example.com"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <Button onClick={() => onChange(value)}>Apply</Button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onChange(value);
+          }}
+          className="flex items-center gap-x-2"
+        >
+          <Input
+            placeholder="https://example.com"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onLinkOff}
+            className="p-3"
+            disabled={!editor?.getAttributes("link").href}
+          >
+            <Link2OffIcon />
+          </Button>
+          <Button type="submit">Apply</Button>
+        </form>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -396,6 +431,20 @@ const HighlightColorButton = () => {
   const { editor } = useEditorStore();
   const value = editor?.getAttributes("highlight").color || "#ffffff";
 
+  const colors = [
+    { color: "#ffff01", title: "yellow" },
+    { color: "#00ff01", title: "lime" },
+    { color: "#ff00ff", title: "magenta" },
+    { color: "#00ffff", title: "aqua" },
+    { color: "#b400ff", title: "purple" },
+    { color: "#f8b1c1", title: "pink" },
+    { color: "#87ceeb", title: "skyblue" },
+    { color: "#8dcf9b", title: "light green" },
+    { color: "#fbbc04", title: "light orange" },
+    { color: "#000000", title: "black" },
+    { color: "#ffffff", title: "white" },
+  ];
+
   const onChange = (color: ColorResult) => {
     editor?.chain().focus().setHighlight({ color: color.hex }).run();
   };
@@ -404,11 +453,17 @@ const HighlightColorButton = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
-          <HighlighterIcon className="size-4" />
+          <HighlighterIcon className="size-4 rounded-sm" />
+          <div
+            className="h-0.5 w-full"
+            style={{
+              backgroundColor: editor?.getAttributes("highlight").color || "",
+            }}
+          />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
-        <SketchPicker color={value} onChange={onChange} />
+        <SketchPicker color={value} onChange={onChange} presetColors={colors} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -422,6 +477,22 @@ const TextColorButton = () => {
     editor?.chain().focus().setColor(color.hex).run();
   };
 
+  const colors = [
+    { color: "#000000", title: "black" },
+    { color: "#ffffff", title: "white" },
+    { color: "#4285f4", title: "cornflower blue" },
+    { color: "#ea4335", title: "orangered" },
+    { color: "#fbbc04", title: "light orange" },
+    { color: "#34a853", title: "green" },
+    { color: "#ff6d01", title: "coral" },
+    { color: "#46bdc6", title: "turquoise" },
+    { color: "#8d2cb2", title: "purple" },
+    { color: "#6c3e1c", title: "brown" },
+    { color: "#78909c", title: "cyan gray" },
+    { color: "#2f2f2f", title: "dark gray" },
+    { color: "#e5e5e5", title: "light gray" },
+  ];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -431,7 +502,7 @@ const TextColorButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0">
-        <SketchPicker color={value} onChange={onChange} />
+        <SketchPicker color={value} onChange={onChange} presetColors={colors} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -485,7 +556,7 @@ const HeadingLevelButton = () => {
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80 leading-normal",
               (value === 0 && !editor?.isActive("heading")) ||
                 (editor?.isActive("heading", { level: value }) &&
-                  "bg-neutral-200/80")
+                  "bg-neutral-200/80"),
             )}
             style={{ fontSize }}
           >
@@ -503,17 +574,25 @@ const FontFamilyButton = () => {
     { label: "Arial", value: "Arial" },
     { label: "Times New Roman", value: "Times New Roman" },
     { label: "Courier New", value: "Courier New" },
+    { label: "M PLUS 1p", value: "var(--font-m-plus-1p)" },
+    { label: "M PLUS Rounded 1c", value: "var(--font-m-plus-rounded-1c)" },
+    { label: "Noto Sans JP", value: "var(--font-noto-sans-jp)" },
+    { label: "LINE Seed", value: "var(--font-line-seed)" },
+    { label: "Consola", value: "var(--font-consola)" },
     { label: "Georgia", value: "Georgia" },
     { label: "Verdana", value: "Verdana" },
+    { label: "Comic Relief", value: "var(--font-comic-relief)" },
   ];
+
+  const currentFontValue = editor?.getAttributes("textStyle").fontFamily;
+  const currentFontLabel =
+    fonts.find((font) => font.value === currentFontValue)?.label || "Arial";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="h-7 w-[120px] shrink-0 flex items-center justify-between rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
-          <span className="truncate">
-            {editor?.getAttributes("textStyle").fontFamily || "Arial"}
-          </span>
+          <span className="truncate">{currentFontLabel}</span>
           <ChevronDownIcon className="ml-2 size-4 shrink-0" />
         </button>
       </DropdownMenuTrigger>
@@ -522,11 +601,11 @@ const FontFamilyButton = () => {
           <DropdownMenuItem
             key={value}
             onClick={() => editor?.chain().focus().setFontFamily(value).run()}
-            // フォント指定を className(Tailwind CSS) で行うのは動的すぎて正しく動作しないため、styles でせてい
+            // フォント指定を className(Tailwind CSS) で行うのは動的すぎて正しく動作しないため、styles で設定
             className={cn(
               "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
               editor?.getAttributes("textStyle").fontFamily === value &&
-                "bg-neutral-200/80"
+                "bg-neutral-200/80",
             )}
             style={{ fontFamily: value }}
           >
@@ -541,48 +620,55 @@ const FontFamilyButton = () => {
 interface ToolbarButtonProps {
   onClick?: () => void;
   isActive?: boolean;
+  disabled?: boolean;
   icon: LucideIcon;
 }
 
 const ToolbarButton = ({
   onClick,
   isActive,
+  disabled,
   // Icon にリマップ
   icon: Icon,
 }: ToolbarButtonProps) => {
+  // アイコンの色を状態に応じて決定
   return (
     <button
       onClick={onClick}
       // 動的クラスを扱う場合は`cn`を使うことで、バグを抑えることができる
       className={cn(
-        "text-sm h-7 min-w-7 flex items-center justify-center rounded-sm hover:bg-neutral-200/80",
-        isActive && "bg-neutral-200/80"
+        "text-sm h-7 min-w-7 flex items-center justify-center rounded-sm",
+        !disabled && "hover:bg-neutral-200/80",
+        isActive && "bg-neutral-200/80",
       )}
+      disabled={disabled}
     >
-      <Icon className="size-4" />
+      <Icon className={cn("size-4", disabled ? "stroke-neutral-500" : "")} />
     </button>
   );
 };
 
 export const Toolbar = () => {
   const { editor } = useEditorStore();
-  // console.log("Toolbar editor: ", { editor });
 
   const sections: {
     label: string;
     icon: LucideIcon;
     onClick: () => void;
     isActive?: boolean;
+    disabled?: boolean;
   }[][] = [
     [
       {
         label: "Undo",
         icon: Undo2Icon,
+        disabled: !editor?.can().undo(),
         onClick: () => editor?.chain().focus().undo().run(),
       },
       {
         label: "Redo",
         icon: Redo2Icon,
+        disabled: !editor?.can().redo(),
         onClick: () => editor?.chain().focus().redo().run(),
       },
       {
@@ -593,12 +679,13 @@ export const Toolbar = () => {
       {
         label: "Spell Check",
         icon: SpellCheckIcon,
+        isActive: editor?.view.dom.getAttribute("spellcheck") === "true",
         onClick: () => {
           // ブラウザのネイティブスペルチェックを on/off
           const current = editor?.view.dom.getAttribute("spellcheck");
           editor?.view.dom.setAttribute(
             "spellcheck",
-            current === "false" ? "true" : "false"
+            current === "false" ? "true" : "false",
           );
         },
       },
@@ -622,6 +709,12 @@ export const Toolbar = () => {
         isActive: editor?.isActive("underline"),
         onClick: () => editor?.chain().focus().toggleUnderline().run(),
       },
+      {
+        label: "Strikethrough",
+        icon: StrikethroughIcon,
+        isActive: editor?.isActive("strike"),
+        onClick: () => editor?.chain().focus().toggleStrike().run(),
+      },
     ],
     [
       {
@@ -635,6 +728,12 @@ export const Toolbar = () => {
         icon: ListTodoIcon,
         isActive: editor?.isActive("taskList"),
         onClick: () => editor?.chain().focus().toggleTaskList().run(),
+      },
+      {
+        label: "Blockquote",
+        icon: TextQuoteIcon,
+        isActive: editor?.isActive("blockquote"),
+        onClick: () => editor?.chain().focus().toggleBlockquote().run(),
       },
       {
         label: "Remove Formatting",
