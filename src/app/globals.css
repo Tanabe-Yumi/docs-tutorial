@@ -264,6 +264,13 @@ body {
     cursor: ew-resize;
     cursor: col-resize;
   }
+
+  /* blockquote */
+  blockquote {
+    border-left: 4px solid hsl(0, 0%, 80%);
+    margin: 1rem 0;
+    padding-left: 0.5rem;
+  }
 }
 
 /* For mobile */

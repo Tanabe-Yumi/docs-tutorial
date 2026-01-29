@@ -45,6 +45,7 @@ import {
   SearchIcon,
   SpellCheckIcon,
   StrikethroughIcon,
+  TextQuoteIcon,
   UnderlineIcon,
   Undo2Icon,
   UploadIcon,
@@ -727,6 +728,12 @@ export const Toolbar = () => {
         icon: ListTodoIcon,
         isActive: editor?.isActive("taskList"),
         onClick: () => editor?.chain().focus().toggleTaskList().run(),
+      },
+      {
+        label: "Blockquote",
+        icon: TextQuoteIcon,
+        isActive: editor?.isActive("blockquote"),
+        onClick: () => editor?.chain().focus().toggleBlockquote().run(),
       },
       {
         label: "Remove Formatting",
