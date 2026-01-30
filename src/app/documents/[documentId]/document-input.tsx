@@ -81,6 +81,7 @@ export const DocumentInput = ({ title, id }: DocumentInputProps) => {
           onClick={() => {
             // 関数内の処理は非同期的に行われるため、すぐに focus すると input 要素がレンダリングされておらず失敗する
             // そのため、setTimeout を用いて少し時間をおいてから focus する
+            setValue(title);
             setIsEditing(true);
             setTimeout(() => {
               inputRef.current?.focus();
