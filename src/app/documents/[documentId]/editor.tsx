@@ -17,8 +17,13 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
 import { useStorage } from "@liveblocks/react";
+import { all, createLowlight } from "lowlight";
+import css from "highlight.js/lib/languages/css";
+import js from "highlight.js/lib/languages/javascript";
+import html from "highlight.js/lib/languages/xml";
 
 import { useEditorStore } from "@/store/use-editor-store";
 import { FontSizeExtension } from "@/extensions/font-size";
@@ -30,6 +35,11 @@ import { LEFT_MARGIN_DEFAULT, RIGHT_MARGIN_DEFAULT } from "@/constants/margins";
 interface EditorProps {
   initialContent?: string | undefined;
 }
+
+const lowlight = createLowlight(all);
+lowlight.register("html", html);
+lowlight.register("css", css);
+lowlight.register("js", js);
 
 export const Editor = ({ initialContent }: EditorProps) => {
   const liveBlocks = useLiveblocksExtension({
@@ -124,6 +134,10 @@ export const Editor = ({ initialContent }: EditorProps) => {
       TableRow,
       Image,
       ImageResize,
+      CodeBlockLowlight.configure({
+        lowlight,
+        defaultLanguage: "plaintext",
+      }),
     ],
     immediatelyRender: false,
     autofocus: true,
