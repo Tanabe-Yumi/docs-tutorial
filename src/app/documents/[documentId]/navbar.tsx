@@ -9,6 +9,7 @@ import { useMutation } from "convex/react";
 import { BsFilePdf } from "react-icons/bs";
 import {
   BoldIcon,
+  CodeIcon,
   FileIcon,
   FileJsonIcon,
   FilePenIcon,
@@ -246,6 +247,13 @@ export const Navbar = ({ data }: NavbarProps) => {
                   >
                     <MinusIcon className="size-4 mr-2" />
                     Separator line
+                  </MenubarItem>
+                  <MenubarItem
+                    onClick={() => editor?.chain().focus().setCodeBlock().run()}
+                    disabled={editor?.isActive("codeBlock")}
+                  >
+                    <CodeIcon className="size-4 mr-2" />
+                    Code block <MenubarShortcut>⌘⌥C</MenubarShortcut>
                   </MenubarItem>
                 </MenubarContent>
               </MenubarMenu>
