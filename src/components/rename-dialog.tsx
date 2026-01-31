@@ -35,8 +35,12 @@ export const RenameDialog = ({
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const newValue = title.trim();
+    if (newValue === "") return;
+
     setIsUpdating(true);
-    update({ id: documentId, title: title.trim() || "Untitled" })
+    update({ id: documentId, title: newValue })
       .catch(() => toast.error("Something went wrong"))
       .then(() => toast.success("Document updated"))
       .finally(() => {
@@ -78,7 +82,7 @@ export const RenameDialog = ({
             </Button>
             <Button
               type="submit"
-              disabled={isUpdating}
+              disabled={isUpdating || title.trim() === ""}
               onClick={(e) => e.stopPropagation()}
             >
               Save
