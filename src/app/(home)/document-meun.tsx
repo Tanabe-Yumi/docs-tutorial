@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ExternalLinkIcon,
   FilePenIcon,
@@ -26,15 +27,21 @@ export const DocumentMenu = ({
   title,
   onNewTab,
 }: DocumentMenuProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
           <MoreVertical className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <RenameDialog documentId={documentId} initialTile={title}>
+        <RenameDialog
+          documentId={documentId}
+          initialTile={title}
+          onPostProcess={() => setIsOpen(false)}
+        >
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
@@ -43,7 +50,10 @@ export const DocumentMenu = ({
             Rename
           </DropdownMenuItem>
         </RenameDialog>
-        <RemoveDialog documentId={documentId}>
+        <RemoveDialog
+          documentId={documentId}
+          onPostProcess={() => setIsOpen(false)}
+        >
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}

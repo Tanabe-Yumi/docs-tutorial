@@ -20,12 +20,14 @@ import { Button } from "./ui/button";
 interface RenameDialogProps {
   documentId: Id<"documents">;
   initialTile: string;
+  onPostProcess?: () => void;
   children: React.ReactNode;
 }
 
 export const RenameDialog = ({
   documentId,
   initialTile,
+  onPostProcess,
   children,
 }: RenameDialogProps) => {
   const update = useMutation(api.documents.updateById);
@@ -46,11 +48,21 @@ export const RenameDialog = ({
       .finally(() => {
         setIsUpdating(false);
         setOpen(false);
+        onPostProcess?.();
       });
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+
+    // ダイアログが閉じられたとき、親のメニューも閉じる
+    if (!newOpen) {
+      onPostProcess?.();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent onClick={(e) => e.stopPropagation()}>
         <form onSubmit={onSubmit}>
@@ -75,7 +87,7 @@ export const RenameDialog = ({
               disabled={isUpdating}
               onClick={(e) => {
                 e.preventDefault();
-                setOpen(false);
+                handleOpenChange(false);
               }}
             >
               Cancel

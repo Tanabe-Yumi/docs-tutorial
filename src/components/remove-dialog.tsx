@@ -20,6 +20,7 @@ import {
 
 interface RemoveDialogProps {
   documentId: Id<"documents">;
+  onPostProcess?: () => void;
   children: React.ReactNode;
 }
 
@@ -29,13 +30,27 @@ interface RemoveDialogProps {
 //       コンポーネントA の children に B を配置
 //       B をクリックしたときに、A のクリックイベントが発火するのを避ける
 
-export const RemoveDialog = ({ documentId, children }: RemoveDialogProps) => {
+export const RemoveDialog = ({
+  documentId,
+  onPostProcess,
+  children,
+}: RemoveDialogProps) => {
   const router = useRouter();
   const remove = useMutation(api.documents.removeById);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+
+    // ダイアログが閉じられたとき、親のメニューも閉じる
+    if (!newOpen) {
+      onPostProcess?.();
+    }
+  };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent onClick={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
@@ -46,7 +61,12 @@ export const RemoveDialog = ({ documentId, children }: RemoveDialogProps) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+          <AlertDialogCancel
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenChange(false);
+            }}
+          >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
@@ -61,7 +81,10 @@ export const RemoveDialog = ({ documentId, children }: RemoveDialogProps) => {
                   // TODO: ホームに戻らずエラー画面になるバグを修正
                   router.push("/");
                 })
-                .finally(() => setIsRemoving(false));
+                .finally(() => {
+                  setIsRemoving(false);
+                  onPostProcess?.();
+                });
             }}
           >
             Delete
