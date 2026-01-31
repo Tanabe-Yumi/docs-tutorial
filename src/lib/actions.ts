@@ -2,6 +2,7 @@
 
 import { ConvexHttpClient } from "convex/browser";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { type User } from "@/types/user";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 
@@ -19,12 +20,31 @@ export async function getUsers() {
   type SessionClaimsWithOrg = typeof sessionClaims & {
     o?: { id?: string };
   };
+  const orgId =
+    ((sessionClaims as SessionClaimsWithOrg)?.o?.id as string) || undefined;
+
+  // 個人ログインの場合は、自分のみの配列を返す
+  if (!orgId && sessionClaims?.sub) {
+    const userInfo = await clerk.users.getUser(sessionClaims?.sub);
+    const user: User = {
+      id: userInfo.id,
+      name:
+        userInfo.fullName ??
+        userInfo.primaryEmailAddress?.emailAddress ??
+        "Anonymous",
+      avatar: userInfo.imageUrl,
+      color: "",
+    };
+
+    return [user];
+  }
+
   // 同じ組織内のユーザーを全て取得
   const response = await clerk.users.getUserList({
     organizationId: [(sessionClaims as SessionClaimsWithOrg)?.o?.id as string],
   });
 
-  const users = response.data.map((user) => ({
+  const users: User[] = response.data.map((user) => ({
     id: user.id,
     // Google 認証でない場合(メール認証)は fullName が存在しないため、email を使用
     name:
