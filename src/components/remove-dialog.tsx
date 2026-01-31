@@ -74,17 +74,14 @@ export const RemoveDialog = ({
             onClick={(e) => {
               e.stopPropagation();
               setIsRemoving(true);
+
+              // 削除直後にドキュメントID が DB に存在せずエラーページが表示されるのを回避するため、先に遷移
+              router.push("/");
+
               remove({ id: documentId })
                 .catch(() => toast.error("Something went wrong"))
-                .then(() => {
-                  toast.success("Document removed");
-                  // TODO: ホームに戻らずエラー画面になるバグを修正
-                  router.push("/");
-                })
-                .finally(() => {
-                  setIsRemoving(false);
-                  onPostProcess?.();
-                });
+                .then(() => toast.success("Document removed"))
+                .finally(() => setIsRemoving(false));
             }}
           >
             Delete
