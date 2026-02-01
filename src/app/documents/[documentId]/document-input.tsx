@@ -25,10 +25,10 @@ export const DocumentInput = ({ title, id }: DocumentInputProps) => {
   const mutate = useMutation(api.documents.updateById);
 
   const debouncedUpdate = useDebounce((newValue: string) => {
-    if (newValue === title) return;
+    if (newValue.trim() === "" || newValue.trim() === title) return;
 
     setIsPending(true);
-    mutate({ id, title: newValue })
+    mutate({ id, title: newValue.trim() })
       .then(() => toast.success("Document updated"))
       .catch(() => toast.error("Something went wrong"))
       .finally(() => setIsPending(false));
@@ -47,8 +47,15 @@ export const DocumentInput = ({ title, id }: DocumentInputProps) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const newValue = value.trim();
+    if (newValue === "") {
+      setIsEditing(false);
+      setValue(title);
+      return;
+    }
+
     setIsPending(true);
-    mutate({ id, title: value })
+    mutate({ id, title: newValue })
       .then(() => {
         toast.success("Document updated");
         setIsEditing(false);
@@ -81,6 +88,7 @@ export const DocumentInput = ({ title, id }: DocumentInputProps) => {
           onClick={() => {
             // 関数内の処理は非同期的に行われるため、すぐに focus すると input 要素がレンダリングされておらず失敗する
             // そのため、setTimeout を用いて少し時間をおいてから focus する
+            setValue(title);
             setIsEditing(true);
             setTimeout(() => {
               inputRef.current?.focus();

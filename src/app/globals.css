@@ -130,8 +130,10 @@ body {
 
   ul,
   ol {
-    padding: 0 1rem;
+    padding: 0;
     margin: 1.25rem 1rem 1.25rem 0.4rem;
+
+    list-style-position: inside;
   }
 
   /* unordered list */
@@ -141,9 +143,10 @@ body {
     p {
       margin-top: 0.25em;
       margin-bottom: 0.25em;
+      display: inline;
     }
   }
-
+  
   /* ordered list */
   ol li {
     list-style-type: decimal;
@@ -151,7 +154,21 @@ body {
     p {
       margin-top: 0.25em;
       margin-bottom: 0.25em;
+      display: inline;
     }
+  }
+
+      /* テキストの align に合わせてリストの点も移動 */
+  li:has(p[style*="text-align: center"]) {
+    text-align: center;
+  }
+
+  li:has(p[style*="text-align: right"]) {
+    text-align: right;
+  }
+
+  li:has(p[style*="text-align: justify"]) {
+    text-align: justify;
   }
 
   /* image */
@@ -173,8 +190,9 @@ body {
     padding: 0;
 
     li {
-      align-items: flex-start;
       display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
 
       > label {
         flex: 0 0 auto;
@@ -184,16 +202,28 @@ body {
       }
 
       > div {
-        flex: 1 1 auto;
+        flex: 0 1 auto;
       }
-    }
 
-    input[type='checkbox'] {
-      cursor: pointer;
-    }
+      p {
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
+        display: block; 
+      }
 
-    ul[data-type='taskList'] {
-      margin: 0;
+      /* テキストの align に合わせてチェックボックスも移動 */
+      &:has(p[style*="text-align: center"]) {
+        justify-content: center;
+      }
+
+      &:has(p[style*="text-align: right"]) {
+        justify-content: flex-end;
+      }
+
+      &:has(p[style*="text-align: left"]),
+      &:has(p[style*="text-align: justify"]) {
+        justify-content: flex-start;
+      }
     }
   }
 

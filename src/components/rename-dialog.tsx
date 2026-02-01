@@ -20,12 +20,14 @@ import { Button } from "./ui/button";
 interface RenameDialogProps {
   documentId: Id<"documents">;
   initialTile: string;
+  onPostProcess?: () => void;
   children: React.ReactNode;
 }
 
 export const RenameDialog = ({
   documentId,
   initialTile,
+  onPostProcess,
   children,
 }: RenameDialogProps) => {
   const update = useMutation(api.documents.updateById);
@@ -35,18 +37,32 @@ export const RenameDialog = ({
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const newValue = title.trim();
+    if (newValue === "") return;
+
     setIsUpdating(true);
-    update({ id: documentId, title: title.trim() || "Untitled" })
+    update({ id: documentId, title: newValue })
       .catch(() => toast.error("Something went wrong"))
       .then(() => toast.success("Document updated"))
       .finally(() => {
         setIsUpdating(false);
         setOpen(false);
+        onPostProcess?.();
       });
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+
+    // ダイアログが閉じられたとき、親のメニューも閉じる
+    if (!newOpen) {
+      onPostProcess?.();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent onClick={(e) => e.stopPropagation()}>
         <form onSubmit={onSubmit}>
@@ -71,14 +87,14 @@ export const RenameDialog = ({
               disabled={isUpdating}
               onClick={(e) => {
                 e.preventDefault();
-                setOpen(false);
+                handleOpenChange(false);
               }}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={isUpdating}
+              disabled={isUpdating || title.trim() === ""}
               onClick={(e) => e.stopPropagation()}
             >
               Save

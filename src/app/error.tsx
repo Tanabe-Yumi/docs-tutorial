@@ -27,11 +27,11 @@ const ErrorPage = ({
         </div>
       </div>
       <div className="flex items-center gap-x-3">
-        <Button onClick={reset} className="font-medium ps-6">
+        <Button onClick={reset} className="font-medium">
           Try again
         </Button>
-        <Button asChild variant="ghost" className="font-medium ps-6">
-          <Link href="/">Go back</Link>
+        <Button asChild variant="ghost" className="font-medium">
+          <Link href="/">Go home</Link>
         </Button>
       </div>
     </div>
